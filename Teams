@@ -1,0 +1,134 @@
+using System.Data.SqlClient;
+using System;
+using System.Collections;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
+
+namespace FifaAPI 
+{
+    public class Teams
+    {
+
+        SqlConnection con = new SqlConnection("server=Karamo-PC\\KARAMOINSTANCE2;database=MYDB;integrated security = true");
+
+        #region Variables
+
+        
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        
+
+        public int vteamId { get; set; }
+        public string vteamName { get; set; }
+        public string vteamCountry { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public string vteamFlag { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public string vteamJersey { get; set; }
+       // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public int vplayerId { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+
+        public string vplayerName { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+
+        public string vplayerPosition { get; set; }
+        #endregion 
+
+        #region Add Team
+        public string AddTeam(string Tname,string Tcountry, string tFlag,string tJersey)
+        {
+            SqlCommand cmd = new SqlCommand("insert into Teams(teamName,country,teamFlag,teamJersey)" +
+                " values(@teamName,@country,@teamFlag,@teamJersey)",con);
+
+            cmd.Parameters.AddWithValue("@teamName", Tname);
+            cmd.Parameters.AddWithValue("@country", Tcountry);
+            cmd.Parameters.AddWithValue("@teamFlag",tFlag);
+            cmd.Parameters.AddWithValue("@teamJersey", tJersey);
+            con.Open();
+            cmd.ExecuteNonQuery();
+            con.Close();
+            return "Team Added Successfully";
+        }
+        #endregion
+
+        #region Show All Teams
+
+        public List<Teams> getAllTeams()
+        {
+            SqlCommand cmd = new SqlCommand("select teamId,teamName,country from teams", con);
+            con.Open();
+
+            List<Teams> teamList = new List<Teams>();
+            SqlDataReader rd = cmd.ExecuteReader();
+
+            while(rd.Read())
+            {
+                teamList.Add(new Teams()
+                { 
+                    vteamId = Convert.ToInt32(rd[0]),
+                    vteamName = rd[1].ToString(),
+                    vteamCountry = rd[2].ToString()
+                });
+            }
+            rd.Close();
+            con.Close();
+
+            return teamList;
+        }
+
+        #endregion
+
+        #region Get Team By Name 
+
+        public List<Teams> getATeam(string vTeamName)
+        {
+            
+            SqlCommand cmd = new SqlCommand("select teams.teamId,teams.teamName,teams.country, players.playerId,players.playerName,players.playerPosition" +
+                " from players inner join teams on players.playerTeamId = teams.teamId" +
+                " where teams.country= @vTeamName", con);
+
+            cmd.Parameters.AddWithValue("@vTeamName",vTeamName);
+            con.Open();
+            List<Teams> teamInfo = new List<Teams>();
+            SqlDataReader rd = cmd.ExecuteReader();
+            while(rd.Read())
+            {
+                teamInfo.Add(new Teams()
+                {
+                    vteamId = Convert.ToInt32(rd[0]),
+                    vteamName = rd[1].ToString(),
+                    vteamCountry = rd[2].ToString(),
+                    vplayerId = Convert.ToInt32(rd[3]),
+                    vplayerName = rd[4].ToString(),
+                    vplayerPosition = rd[5].ToString()
+                    
+                });
+            }
+            rd.Close();
+            con.Close();
+            return teamInfo;
+        }
+
+        #endregion
+
+        #region Count Number of Players
+
+        public int getTeamNum()
+        {
+            SqlCommand cmd = new SqlCommand("select count(teamId) from teams", con);
+            con.Open();
+            
+            int teamNumber = 0;
+            SqlDataReader rd = cmd.ExecuteReader();
+            if (rd.Read())
+                teamNumber = Convert.ToInt32(rd[0]);
+
+            return teamNumber;
+        }
+
+        #endregion 
+
+
+    }
+}
