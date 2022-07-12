@@ -15,9 +15,7 @@ namespace FifaAPI.Controllers
         public string playerImage { get; set; }
         public int playerTeamID { get; set; }
         #endregion
-
         SqlConnection con = new SqlConnection("server=Karamo-PC\\KARAMOINSTANCE2;database=MYDB;integrated security = true");
-
         #region Add Player
         public string addPlayer(string pName, string pPosition, string pTeam, string pImage, int pTeamId)
         {
@@ -65,6 +63,32 @@ namespace FifaAPI.Controllers
 
         #endregion
 
+        #region Get Player By ID
+
+        public List<Players> getPlayerbyID(int id)
+        {
+            SqlCommand cmd = new SqlCommand("select * from players where playerId = " + id, con);
+            con.Open();
+            SqlDataReader rd = cmd.ExecuteReader();
+
+            List<Players> list = new List<Players>();
+            while (rd.Read())
+            {
+                list.Add(new Players()
+                {
+                    playerID = Convert.ToInt32(rd[0]),
+                    playerName = rd[1].ToString(),
+                    playerPosition = rd[2].ToString(),
+                    playerTeam = rd[3].ToString(),
+                    playerTeamID = Convert.ToInt32(rd[5])
+                });
+            }
+            return list;
+            rd.Close();
+            con.Close();
+        }
+
+        #endregion 
         #region Select Player By Name 
 
         public List<Players> getPlayer(string vPlayerName)
@@ -170,6 +194,106 @@ namespace FifaAPI.Controllers
             
          
             return num; 
+        }
+
+        #endregion
+
+        #region Search Players By Positon 
+        // Return the playerId, name and country of the player 
+
+        public List<Players> getPlayerbyPosition(string position)
+        {
+            SqlCommand cmd = new SqlCommand("select * from players where playerPosition like @position" , con);
+            con.Open();
+            SqlDataReader rd = cmd.ExecuteReader();
+            List<Players> playerPos = new List<Players>();
+            while (rd.Read())
+            {
+                playerPos.Add(new Players()
+                {
+                    playerID = Convert.ToInt32(rd[0]),
+                    playerName = rd[1].ToString(),
+                    playerPosition = rd[2].ToString(),
+                    playerTeam = rd[3].ToString(),
+                    playerTeamID = Convert.ToInt32(rd[5])
+
+                });
+                rd.Close();
+                con.Close() ;
+            }
+
+            return playerPos;
+        }
+
+
+
+        #endregion
+
+        #region Number of Forwards
+
+        public int getPositionNum()
+        {
+            SqlCommand cmd = new SqlCommand("select count(playerId) from players where playerPosition = 'Forward' ", con);
+            con.Open();
+            int num = 0;
+            SqlDataReader rd = cmd.ExecuteReader();
+            if (rd.Read())
+                num = Convert.ToInt32(rd[0]);
+            return num;
+        }
+
+        #endregion
+
+        #region Number of Midfielders
+        
+        public int getMidfieldersNumber()
+        {
+            SqlCommand cmd = new SqlCommand("select count(playerId) from players where playerPosition = 'Midfielder' ", con);
+            con.Open();
+            SqlDataReader rd = cmd.ExecuteReader();
+            int num = 0;
+            if (rd.Read())
+                num = Convert.ToInt32(rd[0]);
+            rd.Close();
+            con.Close();
+            return num;
+        }
+
+        #endregion
+
+        #region Number of Defenders
+        
+      public int getNumberofDefenders()
+        {
+            SqlCommand cmd = new SqlCommand("select count(playerId) from players where playerPosition = 'Defender' " , con);
+            con.Open();
+            SqlDataReader rd = cmd.ExecuteReader();
+            int num = 0;
+            if (rd.Read())
+                num = Convert.ToInt32(rd[0]);
+            return num;
+            rd.Close();
+            con.Close();
+            
+        }
+
+        #endregion
+
+        #region Number of Goalkeepers
+
+        public int getNumberofGoallies()
+        {
+            SqlCommand cmd = new SqlCommand("select count(playerId) from players where playerPosition = 'Goalkeeper' ",con);
+            con.Open();
+            int num = 0;
+            SqlDataReader rd = cmd.ExecuteReader();
+            if (rd.Read())
+                num = Convert.ToInt32(rd[0]);
+
+            return num;
+            rd.Close();
+            con.Close();
+
         }
 
         #endregion 
