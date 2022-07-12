@@ -30,6 +30,16 @@ namespace FifaAPI.Controllers
 
         #endregion
 
+        #region Get Team By ID
+        [HttpGet]
+        [Route("GetTeamByID")]
+        public IActionResult getTeamfromID(int teamID)
+        {
+            return Ok(teamObj.getTeambyID(teamID));
+        }
+
+        #endregion
+
         #region Get Team By Name
 
         [HttpGet]
