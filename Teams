@@ -9,7 +9,6 @@ namespace FifaAPI
 {
     public class Teams
     {
-
         SqlConnection con = new SqlConnection("server=Karamo-PC\\KARAMOINSTANCE2;database=MYDB;integrated security = true");
 
         #region Variables
@@ -75,6 +74,33 @@ namespace FifaAPI
             con.Close();
 
             return teamList;
+        }
+
+        #endregion
+
+        #region Get Team By ID
+
+        public List<Teams> getTeambyID(int id)
+        {
+            SqlCommand cmd = new SqlCommand("select * from teams where teamId = " + id, con);
+            List<Teams> list = new List<Teams>();
+            con.Open();
+            SqlDataReader rd = cmd.ExecuteReader();
+
+            while (rd.Read())
+            {
+                list.Add(new Teams()
+                {
+                    vteamId = Convert.ToInt32(rd[0]),
+                    vteamName = rd[1].ToString(),
+                    vteamCountry = rd[2].ToString()
+                }) ;
+                
+            }
+            return list;
+            rd.Close();
+            con.Close();
+
         }
 
         #endregion
