@@ -54,6 +54,16 @@ namespace FifaAPI.Controllers
 
         #endregion
 
+        #region Get Player by ID 
+        [HttpGet]
+        [Route("getPlayerByID")]
+        public IActionResult getPlayerbyID(int playerID)
+        {
+            return Ok(playerObj.getPlayerbyID(playerID));
+        }
+
+        #endregion
+
         #region Get Player By Name 
         [HttpGet]
         [Route("playerName")]
@@ -82,8 +92,59 @@ namespace FifaAPI.Controllers
             return Ok(playerObj.getNumofPlayers());
         }
 
+        #endregion
+
+        #region Get Players By Positon 
+        [HttpGet]
+        [Route("PlayersByPosition")]
+
+        public IActionResult getPlayersPostion(string vPlayerPositions)
+        {
+            return Ok(playerObj.getPlayersByPosition(vPlayerPositions));
+        }
+
+        #endregion
+
+        #region Get Number of Forward
+        [HttpGet]
+        [Route("NumberofForwards")]
+        public IActionResult c_getPositionNUm()
+        {
+            return Ok(playerObj.getPositionNum());
+        }
+
+        #endregion
+
+        #region Get Number of Midfielders 
+
+        [HttpGet]
+        [Route("NumberofMidfielders")]
+        public IActionResult getMidfielder()
+        {
+            return Ok(playerObj.getMidfieldersNumber());
+        }
+
+        #endregion
+
+        #region Get Number of Defenders
+        [HttpGet]
+        [Route("GetNumberofDefenders")]
+        public IActionResult getNumDefenders()
+        {
+            return Ok(playerObj.getNumberofDefenders());
+        }
+
+        #endregion
+
+        #region Get Number of Goalkeepers
+        [HttpGet]
+        [Route("GetNumberofGoalkeepers")]
+        public IActionResult getGoallies()
+        {
+            return Ok(playerObj.getNumberofGoallies());
+        }
+
         #endregion 
-
-
     }
+
 }
